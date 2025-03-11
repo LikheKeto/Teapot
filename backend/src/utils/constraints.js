@@ -37,7 +37,24 @@ const loginConstraints = {
   },
 };
 
+const noteConstraints = {
+  title: {
+    presence: true,
+    length: {
+      minimum: 3,
+      maximum: 255,
+    },
+  },
+  content: {
+    presence: true,
+    length: {
+      minimum: 10,
+    },
+  },
+};
+
 module.exports = {
   registerConstraints,
   loginConstraints,
+  noteConstraints,
 };
