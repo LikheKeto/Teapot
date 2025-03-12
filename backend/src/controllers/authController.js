@@ -2,8 +2,14 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { createUser, findUserByEmail } = require("../models/userModel");
 const config = require("../utils/config");
+const logger = require("../utils/logger");
+const {
+  loginConstraints,
+  registerConstraints,
+} = require("../utils/constraints");
+const validate = require("validate.js");
 
-const register = async (req, res) => {
+const registerHandler = async (req, res) => {
   const { username, email, password } = req.body;
 
   const registerInput = { username, email, password };
@@ -17,17 +23,17 @@ const register = async (req, res) => {
   try {
     const user = await createUser(username, email, hashedPassword);
     res.status(201).json(user);
-    logger.info(`Created new user with username '${username}'`);
+    logger.info(`User registered: '${email}'`);
   } catch (err) {
     res.status(500).json({
-      error: "Error inserting user record to database",
+      error: "Error registering the user",
       subError: err.message,
     });
-    logger.error(err.message);
+    logger.error(`Registration error: ${err.message}`);
   }
 };
 
-const login = async (req, res) => {
+const loginHandler = async (req, res) => {
   const { email, password } = req.body;
 
   const loginInput = { email, password };
@@ -48,11 +54,11 @@ const login = async (req, res) => {
     res.json({ token });
   } catch (err) {
     res.status(500).json({ error: err.message });
-    logger.error(err.message);
+    logger.error(`Login error: ${err.message}`);
   }
 };
 
 module.exports = {
-  register,
-  login,
+  registerHandler,
+  loginHandler,
 };

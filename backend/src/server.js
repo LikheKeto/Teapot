@@ -17,12 +17,14 @@ app.use("/api/notes", notesRoutes);
 
 app.get("/status", (req, res) => {
   const status = {
-    Status: "Running",
+    status: "Running",
   };
 
-  response.send(status);
+  res.send(status);
 });
 
-app.listen(config.port, () => {
+const server = app.listen(config.port, () => {
   logger.info(`Server is running on port ${config.port}`);
 });
+
+module.exports = server;

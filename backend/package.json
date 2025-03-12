@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "test": "jest",
         "start": "node src/server.js",
         "migrate:up": "node-pg-migrate up",
         "migrate:down": "node-pg-migrate down",
@@ -24,5 +24,9 @@
         "node-pg-migrate": "^7.9.1",
         "pg": "^8.13.3",
         "winston": "^3.17.0"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0",
+        "supertest": "^7.0.0"
     }
 }

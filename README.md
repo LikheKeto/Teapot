@@ -14,3 +14,11 @@ npm install pg pg-migrate
 ```
 
 3. Install Winston for logging
+```
+npm install winston
+```
+
+4. Install Jest for testing API and SuperTest for testing HTTP
+```
+npm install --save-dev jest supertest
+```
