@@ -53,8 +53,19 @@ const noteConstraints = {
   },
 };
 
+const categoryConstraints = {
+  name: {
+    presence: true,
+    length: {
+      minimum: 3,
+      maximum: 255,
+    },
+  },
+};
+
 module.exports = {
   registerConstraints,
   loginConstraints,
   noteConstraints,
+  categoryConstraints,
 };
