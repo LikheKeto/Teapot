@@ -22,3 +22,7 @@ npm install winston
 ```
 npm install --save-dev jest supertest
 ```
+
+## Day 3
+### Setting up frontend
+I decided to setup React using the React Router framework, for easy setup of React

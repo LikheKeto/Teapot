@@ -63,9 +63,25 @@ const categoryConstraints = {
   },
 };
 
+const assignConstraints = {
+  noteId: {
+    presence: true,
+    numericality: {
+      onlyInteger: true,
+    },
+  },
+  categoryId: {
+    presence: true,
+    numericality: {
+      onlyInteger: true,
+    },
+  },
+};
+
 module.exports = {
   registerConstraints,
   loginConstraints,
   noteConstraints,
   categoryConstraints,
+  assignConstraints,
 };

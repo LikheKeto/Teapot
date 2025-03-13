@@ -25,11 +25,22 @@ const registerHandler = async (req, res) => {
     res.status(201).json(user);
     logger.info(`User registered: '${email}'`);
   } catch (err) {
-    res.status(500).json({
-      error: "Error registering the user",
-      subError: err.message,
-    });
     logger.error(`Registration error: ${err.message}`);
+    if (err.code === "23505") {
+      const field = err.constraint?.includes("username")
+        ? "username"
+        : err.constraint?.includes("email")
+        ? "email"
+        : null;
+      if (field) {
+        return res.status(409).json({
+          error: { [field]: `User with this ${field} already exists` },
+        });
+      } else {
+        return res.status(409).json({ error: { general: "Duplicate entry" } });
+      }
+    }
+    res.status(500).json({ error: err.message });
   }
 };
 

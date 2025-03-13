@@ -4,9 +4,11 @@ const {
   editNote,
   deleteNote,
   getNotesByUserId,
+  assignNote,
+  deassignNote,
 } = require("../models/noteModel");
 const validate = require("validate.js");
-const { noteConstraints } = require("../utils/constraints");
+const { noteConstraints, assignConstraints } = require("../utils/constraints");
 const logger = require("../utils/logger");
 
 const getNoteHandler = async (req, res) => {
@@ -91,7 +93,30 @@ const createNoteHandler = async (req, res) => {
 const getNotesHandler = async (req, res) => {
   // Controller for fetching all notes of user; with pagination and search
   const userId = req.user.id;
-  let { page = 1, limit = 10, searchTerm = "" } = req.query;
+  let {
+    page = 1,
+    limit = 10,
+    searchTerm = "",
+    sortBy = "created_at",
+    sortOrder = "DESC",
+    categoryId = null,
+  } = req.query;
+
+  // Validate sortBy and sortOrder
+  const validSortColumns = ["created_at", "updated_at", "title"];
+  const validSortOrders = ["ASC", "DESC"];
+
+  if (!validSortColumns.includes(sortBy)) {
+    return res.status(400).json({
+      error: "Invalid sort column. Use 'created_at', 'updated_at', or 'title'",
+    });
+  }
+
+  if (!validSortOrders.includes(sortOrder)) {
+    return res
+      .status(400)
+      .json({ error: "Invalid sort order. Use 'ASC' or 'DESC'" });
+  }
 
   page = parseInt(page);
   limit = parseInt(limit);
@@ -102,11 +127,66 @@ const getNotesHandler = async (req, res) => {
   const offset = (page - 1) * limit;
 
   try {
-    const notes = await getNotesByUserId(userId, offset, limit, searchTerm);
+    const notes = await getNotesByUserId(
+      userId,
+      offset,
+      limit,
+      searchTerm,
+      sortBy,
+      sortOrder,
+      categoryId
+    );
     res.json(notes);
   } catch (err) {
     res.status(500).json({ error: err.message });
     logger.error(`Get notes error: ${err.message}`);
+  }
+};
+
+const assignToCategoryHandler = async (req, res) => {
+  // Controller for assigning a note to a category
+  const { noteId, categoryId } = req.body;
+
+  const assignInput = { noteId, categoryId };
+  const validationFailed = validate(assignInput, assignConstraints);
+  if (validationFailed) {
+    return res.status(400).json({ error: validationFailed });
+  }
+
+  const userId = req.user.id;
+  try {
+    const unauthorized = await assignNote(noteId, categoryId, userId);
+    if (unauthorized) {
+      return res.status(400).json({ error: unauthorized });
+    }
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+    logger.error(`Assign category error: ${err.message}`);
+  }
+};
+
+const deassignCategoryHandler = async (req, res) => {
+  // Controller for deassigning a note from category
+  const { noteId, categoryId } = req.body;
+
+  const assignInput = { noteId, categoryId };
+  const validationFailed = validate(assignInput, assignConstraints);
+  if (validationFailed) {
+    return res.status(400).json({ error: validationFailed });
+  }
+
+  const userId = req.user.id;
+
+  try {
+    const unauthorized = await deassignNote(noteId, categoryId, userId);
+    if (unauthorized) {
+      return res.status(400).json({ error: unauthorized });
+    }
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+    logger.error(`Deassign category error: ${err.message}`);
   }
 };
 
@@ -116,4 +196,6 @@ module.exports = {
   getNoteHandler,
   editNoteHandler,
   deleteNoteHandler,
+  assignToCategoryHandler,
+  deassignCategoryHandler,
 };
