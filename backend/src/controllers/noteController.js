@@ -24,8 +24,11 @@ const getNoteHandler = async (req, res) => {
       res.status(404).json({ error: "Note not found" });
     }
   } catch (err) {
+    logger.error(`Error fetching note: ${noteId} for user: ${userId}`, {
+      error: err.message,
+      stack: err.stack,
+    });
     res.status(500).json({ error: err.message });
-    logger.error(`Get note error: ${err.message}`);
   }
 };
 
@@ -47,10 +50,14 @@ const editNoteHandler = async (req, res) => {
     if (!note) {
       return res.status(404).json({ error: "Note not found" });
     }
+    logger.info(`Note edited successfully: ${noteId} for user: ${userId}`);
     return res.json(note);
   } catch (err) {
+    logger.error(`Error editing note: ${noteId} for user: ${userId}`, {
+      error: err.message,
+      stack: err.stack,
+    });
     res.status(500).json({ error: err.message });
-    logger.error(`Edit note error: ${err.message}`);
   }
 };
 
@@ -60,11 +67,15 @@ const deleteNoteHandler = async (req, res) => {
   const noteId = req.params.noteId;
 
   try {
-    const note = await deleteNote(noteId, userId);
-    return res.json({ success: true });
+    const deleted = await deleteNote(noteId, userId);
+    logger.info(`Note deleted successfully: ${noteId} for user: ${userId}`);
+    return res.json({ success: deleted });
   } catch (err) {
+    logger.error(`Error deleting note: ${noteId} for user: ${userId}`, {
+      error: err.message,
+      stack: err.stack,
+    });
     res.status(500).json({ error: err.message });
-    logger.error(`Delete note error: ${err.message}`);
   }
 };
 
@@ -83,10 +94,13 @@ const createNoteHandler = async (req, res) => {
   try {
     const note = await createNote(title, content, userId);
     res.status(201).json(note);
-    logger.info(`Note created by user: '${userId}'`);
+    logger.info(`Note created successfully: ${note.id} by user: ${userId}`);
   } catch (err) {
+    logger.error(`Error creating note for user: ${userId}`, {
+      error: err.message,
+      stack: err.stack,
+    });
     res.status(500).json({ error: err.message });
-    logger.error(`Create note error: ${err.message}`);
   }
 };
 
@@ -139,8 +153,11 @@ const getNotesHandler = async (req, res) => {
     );
     res.json(notes);
   } catch (err) {
+    logger.error(`Error fetching notes for user: ${userId}`, {
+      error: err.message,
+      stack: err.stack,
+    });
     res.status(500).json({ error: err.message });
-    logger.error(`Get notes error: ${err.message}`);
   }
 };
 
@@ -162,8 +179,14 @@ const assignToCategoryHandler = async (req, res) => {
     }
     res.json({ success: true });
   } catch (err) {
+    logger.error(
+      `Error assigning note: ${noteId} to category: ${categoryId} by user: ${userId}`,
+      {
+        error: err.message,
+        stack: err.stack,
+      }
+    );
     res.status(500).json({ error: err.message });
-    logger.error(`Assign category error: ${err.message}`);
   }
 };
 
@@ -186,8 +209,14 @@ const deassignCategoryHandler = async (req, res) => {
     }
     res.json({ success: true });
   } catch (err) {
+    logger.error(
+      `Error deassigning note: ${noteId} from category: ${categoryId} by user: ${userId}`,
+      {
+        error: err.message,
+        stack: err.stack,
+      }
+    );
     res.status(500).json({ error: err.message });
-    logger.error(`Deassign category error: ${err.message}`);
   }
 };
 

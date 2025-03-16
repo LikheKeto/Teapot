@@ -25,7 +25,10 @@ const registerHandler = async (req, res) => {
     res.status(201).json(user);
     logger.info(`User registered: '${email}'`);
   } catch (err) {
-    logger.error(`Registration error: ${err.message}`);
+    logger.error(`Registration error for email: ${email}`, {
+      error: err.message,
+      stack: err.stack,
+    });
     if (err.code === "23505") {
       const field = err.constraint?.includes("username")
         ? "username"
@@ -64,8 +67,11 @@ const loginHandler = async (req, res) => {
     });
     res.json({ token });
   } catch (err) {
+    logger.error(`Login error for email: ${email}`, {
+      error: err.message,
+      stack: err.stack,
+    });
     res.status(500).json({ error: err.message });
-    logger.error(`Login error: ${err.message}`);
   }
 };
 

@@ -111,7 +111,7 @@ const Notes = () => {
               )}
             </div>
 
-            <div className="flex mt-4 overflow-x-auto sm:justify-center">
+            <div className="flex mt-4 mb-16 overflow-x-auto sm:justify-center">
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}

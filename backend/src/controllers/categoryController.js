@@ -16,8 +16,11 @@ const getCategoriesHandler = async (req, res) => {
     const categories = await getCategories(userId);
     res.json(categories);
   } catch (err) {
+    logger.error(`Error fetching categories for user: ${userId}`, {
+      error: err.message,
+      stack: err.stack,
+    });
     res.status(500).json({ error: err.message });
-    logger.error(`Get category error: ${err.message}`);
   }
 };
 
@@ -40,8 +43,11 @@ const editCategoryHandler = async (req, res) => {
     }
     res.json(category);
   } catch (err) {
+    logger.error(`Error editing category: ${categoryId} for user: ${userId}`, {
+      error: err.message,
+      stack: err.stack,
+    });
     res.status(500).json({ error: err.message });
-    logger.error(`Edit category error: ${err.message}`);
   }
 };
 
@@ -54,8 +60,11 @@ const deleteCategoryHandler = async (req, res) => {
     await deleteCategory(categoryId, userId);
     res.json({ success: true });
   } catch (err) {
+    logger.error(`Error deleting category: ${categoryId} for user: ${userId}`, {
+      error: err.message,
+      stack: err.stack,
+    });
     res.status(500).json({ error: err.message });
-    logger.error(`Delete category error: ${err.message}`);
   }
 };
 
@@ -75,13 +84,14 @@ const createCategoryHandler = async (req, res) => {
     res.status(201).json(category);
     logger.info(`Category created by user: '${userId}'`);
   } catch (err) {
-    logger.error(`Create category error: ${err.message}`);
+    logger.error(`Error creating category for user: ${userId}`, {
+      error: err.message,
+      stack: err.stack,
+    });
     if (err.code === "23505") {
-      return res
-        .status(409)
-        .json({
-          error: { category: "Category with this name already exists" },
-        });
+      return res.status(409).json({
+        error: { category: "Category with this name already exists" },
+      });
     }
     res.status(500).json({ error: err.message });
   }
