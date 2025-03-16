@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { Alert, Spinner, Button } from "flowbite-react";
+import { Alert, Spinner, Pagination } from "flowbite-react";
 import Dock from "../components/Dock";
-import SearchBar from "../components/SearchBar";
 import { useAuth } from "../context/AuthContext";
 import NoteCard from "../components/NoteCard";
 import { toast } from "react-toastify";
@@ -14,13 +13,19 @@ const Notes = () => {
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [filters, setFilters] = useState({
+    searchTerm: "",
+    sortBy: "created_at",
+    sortOrder: "DESC",
+    categoryId: "",
+  });
 
-  const fetchNotes = async (filters, currentPage = 1) => {
+  const fetchNotes = async (page = currentPage) => {
     setLoading(true);
     setError("");
 
     try {
-      const queryParams = new URLSearchParams({ ...filters, currentPage });
+      const queryParams = new URLSearchParams({ ...filters, page });
 
       const response = await fetch(
         `${import.meta.env.VITE_API_ENDPOINT}/api/notes?${queryParams}`,
@@ -46,7 +51,7 @@ const Notes = () => {
   };
 
   useEffect(() => {
-    fetchNotes({}, currentPage);
+    fetchNotes(currentPage);
   }, [currentPage]);
 
   const handleDelete = async (id, setDeleting = null) => {
@@ -76,7 +81,11 @@ const Notes = () => {
     <div className="flex">
       <Dock />
       <div className="w-full p-4">
-        <FilterDock onApplyFilters={fetchNotes} />
+        <FilterDock
+          filters={filters}
+          setFilters={setFilters}
+          onApplyFilters={fetchNotes}
+        />
         <h2 className="my-4 text-4xl font-semibold">Notes</h2>
 
         {loading && <Spinner size="lg" className="m-auto my-4" />}
@@ -102,24 +111,14 @@ const Notes = () => {
               )}
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-4 mt-6">
-              <Button
-                color="gray"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((prev) => prev - 1)}
-              >
-                Previous
-              </Button>
-              <span>
-                Page {currentPage} of {totalPages}
-              </span>
-              <Button
-                color="gray"
-                disabled={currentPage === totalPages || totalPages === 0}
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-              >
-                Next
-              </Button>
+            <div className="flex mt-4 overflow-x-auto sm:justify-center">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(page) => {
+                  setCurrentPage(page);
+                }}
+              />
             </div>
           </>
         )}

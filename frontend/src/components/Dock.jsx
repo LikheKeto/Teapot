@@ -41,6 +41,7 @@ export default function Dock() {
       <Button
         color="red"
         size="xs"
+        className="fixed bottom-4"
         onClick={() => {
           logout();
           navigate("/");

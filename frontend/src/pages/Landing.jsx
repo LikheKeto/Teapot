@@ -3,7 +3,7 @@ import { Button } from "flowbite-react";
 
 const Landing = () => {
   return (
-    <div className="flex items-center justify-between gap-16 lg:gap-0 lg:flex-row flex-col-reverse p-4 md:p-8">
+    <div className="flex flex-col-reverse items-center justify-between gap-16 p-4 lg:gap-0 lg:flex-row md:p-8">
       <div className="flex flex-col gap-4">
         <h1 className="text-5xl font-extrabold">
           Write notes with <span className="text-green-500">Teapot</span>,
@@ -22,7 +22,11 @@ const Landing = () => {
           </Link>
         </div>
       </div>
-      <img className="w-full md:w-9/12 lg:w-1/2" src="/demo.png" alt="demo" />
+      <img
+        className="w-full max-w-7xl md:w-9/12 lg:w-3/5"
+        src="/demo.png"
+        alt="demo"
+      />
     </div>
   );
 };

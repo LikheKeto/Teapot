@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { TextInput, Button, Alert, Spinner } from "flowbite-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Register = () => {
@@ -65,8 +65,8 @@ const Register = () => {
   };
 
   return (
-    <div className="flex justify-center items-center">
-      <div className="w-full max-w-md bg-green-300 p-6 rounded-lg shadow-lg">
+    <div className="flex items-center justify-center flex-grow p-2 m-1 bg-green-400 rounded-lg md:m-8">
+      <div className="w-full max-w-md p-6 rounded-lg shadow-lg bg-green-50">
         <h2 className="text-2xl font-semibold text-center">Register</h2>
 
         {serverError && (
@@ -75,7 +75,7 @@ const Register = () => {
           </Alert>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
             <TextInput
               type="text"
@@ -132,11 +132,11 @@ const Register = () => {
           </Button>
         </form>
 
-        <p className="text-sm text-center mt-4">
+        <p className="mt-4 text-sm text-center">
           Already have an account?{" "}
-          <a href="/login" className="text-purple-500 hover:underline">
+          <Link to={"/login"} className="text-blue-500 hover:underline">
             Login
-          </a>
+          </Link>
         </p>
       </div>
     </div>

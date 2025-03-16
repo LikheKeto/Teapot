@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { TextInput, Button, Alert, Spinner } from "flowbite-react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const { login } = useAuth();
@@ -60,8 +60,8 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center">
-      <div className="w-full max-w-md p-6 rounded-lg shadow-lg bg-green-300">
+    <div className="flex items-center justify-center flex-grow p-2 m-1 bg-green-400 rounded-lg md:m-8">
+      <div className="w-full max-w-md p-6 rounded-lg shadow-lg bg-green-50">
         <h2 className="text-2xl font-semibold text-center">Login</h2>
 
         {serverError && (
@@ -70,7 +70,7 @@ const Login = () => {
           </Alert>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
             <TextInput
               type="email"
@@ -110,11 +110,11 @@ const Login = () => {
           </Button>
         </form>
 
-        <p className="text-sm text-center mt-4">
+        <p className="mt-4 text-sm text-center">
           Don't have an account?{" "}
-          <a href="/register" className="text-purple-500 hover:underline">
+          <Link to={"/register"} className="text-blue-500 hover:underline">
             Register
-          </a>
+          </Link>
         </p>
       </div>
     </div>

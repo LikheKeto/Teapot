@@ -13,9 +13,9 @@ function App() {
   const { token } = useAuth();
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       {!token && <NavigationBar />}
-      <div>
+      <div className="flex flex-col flex-grow">
         <Routes>
           <Route
             path="/"
@@ -64,7 +64,7 @@ function App() {
           />
         </Routes>
       </div>
-    </>
+    </div>
   );
 }
 

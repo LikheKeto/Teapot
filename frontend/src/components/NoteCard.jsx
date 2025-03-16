@@ -12,7 +12,11 @@ export default function NoteCard({ note, onDelete }) {
       <Link to={`/notes/${note.id}`}>
         <div className="flex flex-wrap w-full gap-1">
           {note.categories.map((category) => {
-            return <Badge color="green">{category.name}</Badge>;
+            return (
+              <Badge key={category.name} color="green">
+                {category.name}
+              </Badge>
+            );
           })}
         </div>
         <h3 className="text-lg font-semibold">{note.title}</h3>
@@ -24,7 +28,9 @@ export default function NoteCard({ note, onDelete }) {
 
       <div className="flex items-end justify-between mt-2">
         <p className="text-sm text-slate-500">
-          {new Date(note.updated_at).toDateString()}
+          Created: {new Date(note.created_at).toDateString()}
+          <br />
+          Updated: {new Date(note.updated_at).toDateString()}
         </p>
         <div className="flex gap-2">
           <Link

@@ -6,14 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { ToastContainer } from "react-toastify";
 import { Flowbite } from "flowbite-react";
-
-const customTheme = {
-  button: {
-    color: {
-      primary: "bg-green-500 text-white hover:bg-green-600",
-    },
-  },
-};
+import { customTheme } from "./lib/theme.js";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

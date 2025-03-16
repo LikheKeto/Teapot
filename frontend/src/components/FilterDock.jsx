@@ -3,16 +3,10 @@ import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { Spinner, Select, TextInput, Label } from "flowbite-react";
 
-export default function FilterDock({ onApplyFilters }) {
+export default function FilterDock({ filters, setFilters, onApplyFilters }) {
   const { token } = useAuth();
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [filters, setFilters] = useState({
-    searchTerm: "",
-    sortBy: "created_at",
-    sortOrder: "DESC",
-    categoryId: "",
-  });
 
   const fetchCategories = async () => {
     setLoading(true);
@@ -42,7 +36,7 @@ export default function FilterDock({ onApplyFilters }) {
   };
 
   const applyFilters = () => {
-    onApplyFilters(filters);
+    onApplyFilters();
   };
 
   const clearFilters = () => {
