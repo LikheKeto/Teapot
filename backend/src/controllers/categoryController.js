@@ -75,8 +75,15 @@ const createCategoryHandler = async (req, res) => {
     res.status(201).json(category);
     logger.info(`Category created by user: '${userId}'`);
   } catch (err) {
-    res.status(500).json({ error: err.message });
     logger.error(`Create category error: ${err.message}`);
+    if (err.code === "23505") {
+      return res
+        .status(409)
+        .json({
+          error: { category: "Category with this name already exists" },
+        });
+    }
+    res.status(500).json({ error: err.message });
   }
 };
 

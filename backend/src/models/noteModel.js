@@ -107,79 +107,80 @@ const getNotesByUserId = async (
   userId,
   offset,
   limit,
-  searchTerm,
-  sortBy,
-  sortOrder,
+  searchTerm = "",
+  sortBy = "created_at",
+  sortOrder = "DESC",
   categoryId = null
 ) => {
+  let params = [userId]; // Start with userId
+
   let searchQuery = "";
-  let categoryQuery = "";
-  let params;
-
-  params = [userId, limit, offset];
-
-  // Add search term to query if provided
-  if (searchTerm) {
-    searchQuery = "AND (n.title ILIKE $4 OR n.content ILIKE $4)";
+  if (searchTerm.trim()) {
+    searchQuery = `AND (n.title ILIKE $${
+      params.length + 1
+    } OR n.content ILIKE $${params.length + 1})`;
     params.push(`%${searchTerm}%`);
   }
 
-  // Add category filter to query if provided
+  let categoryQuery = "";
   if (categoryId) {
-    categoryQuery = "AND c.id = $5";
+    categoryQuery = `AND c.id = $${params.length + 1}`;
     params.push(categoryId);
   }
 
-  // Construct the main query
+  params.push(limit, offset); // Add limit and offset at the end
+
   const query = `
-      SELECT 
-        n.id, 
-        n.title, 
-        n.content, 
-        n.created_at, 
-        n.updated_at, 
-        COALESCE(json_agg(json_build_object('id', c.id, 'name', c.name)) FILTER (WHERE c.id IS NOT NULL), '[]') AS categories
-      FROM notes n
-      LEFT JOIN note_categories nc ON n.id = nc.note_id
-      LEFT JOIN categories c ON nc.category_id = c.id
-      WHERE n.user_id = $1 ${searchQuery} ${categoryQuery}
-      GROUP BY n.id
-      ORDER BY n.${sortBy} ${sortOrder}
-      LIMIT $2 OFFSET $3
-    `;
+        SELECT 
+          n.id, 
+          n.title, 
+          n.content, 
+          n.created_at, 
+          n.updated_at, 
+          COALESCE(json_agg(json_build_object('id', c.id, 'name', c.name)) 
+          FILTER (WHERE c.id IS NOT NULL), '[]') AS categories
+        FROM notes n
+        LEFT JOIN note_categories nc ON n.id = nc.note_id
+        LEFT JOIN categories c ON nc.category_id = c.id
+        WHERE n.user_id = $1 ${searchQuery} ${categoryQuery}
+        GROUP BY n.id
+        ORDER BY n.${sortBy} ${sortOrder}
+        LIMIT $${params.length - 1} OFFSET $${params.length}
+      `;
 
   const result = await pool.query(query, params);
 
   // Construct the count query
   let countParams = [userId];
   let countQuery = `
-      SELECT COUNT(DISTINCT n.id) 
-      FROM notes n
-      LEFT JOIN note_categories nc ON n.id = nc.note_id
-      LEFT JOIN categories c ON nc.category_id = c.id
-      WHERE n.user_id = $1
-    `;
+        SELECT COUNT(DISTINCT n.id) 
+        FROM notes n
+        LEFT JOIN note_categories nc ON n.id = nc.note_id
+        LEFT JOIN categories c ON nc.category_id = c.id
+        WHERE n.user_id = $1
+      `;
 
-  if (searchTerm) {
-    countQuery += " AND (n.title ILIKE $2 OR n.content ILIKE $2)";
+  if (searchTerm.trim()) {
+    countQuery += ` AND (n.title ILIKE $${
+      countParams.length + 1
+    } OR n.content ILIKE $${countParams.length + 1})`;
     countParams.push(`%${searchTerm}%`);
   }
 
   if (categoryId) {
-    countQuery += " AND c.id = $3";
+    countQuery += ` AND c.id = $${countParams.length + 1}`;
     countParams.push(categoryId);
   }
 
   const countResult = await pool.query(countQuery, countParams);
-
   const totalNotes = parseInt(countResult.rows[0].count);
   const totalPages = Math.ceil(totalNotes / limit);
-  const currentPage = Math.ceil((offset + limit) / limit); // Calculate current page
+  const currentPage = Math.ceil((offset + limit) / limit);
 
   return {
     notes: result.rows,
     pagination: {
-      currentPage: currentPage,
+      currentPage,
       totalPages,
       totalNotes,
     },

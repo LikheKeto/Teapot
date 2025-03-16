@@ -1,48 +1,54 @@
 import { useState } from "react";
-import { Button, Modal } from "flowbite-react";
+import { Link } from "react-router-dom";
+import { Trash, Pen } from "lucide-react";
+import DeleteConfirmModal from "./DeleteConfirmModal";
+import { Badge } from "flowbite-react";
 
 export default function NoteCard({ note, onDelete }) {
   const [openModal, setOpenModal] = useState(false);
-  const [deleting, setDeleting] = useState(false);
 
   return (
-    <div className="p-4 border rounded-lg shadow-md bg-white">
-      <h3 className="text-lg font-semibold">{note.title}</h3>
-      <p className="text-gray-600">{note.content}</p>
-      <div className="flex gap-2 mt-2">
-        <Button color="indigo" size="xs">
-          Edit
-        </Button>
-        <Button color="red" size="xs" onClick={() => setOpenModal(true)}>
-          Delete
-        </Button>
+    <div className="p-4 border shadow-md rounded-3xl bg-green-50">
+      <Link to={`/notes/${note.id}`}>
+        <div className="flex flex-wrap w-full gap-1">
+          {note.categories.map((category) => {
+            return <Badge color="green">{category.name}</Badge>;
+          })}
+        </div>
+        <h3 className="text-lg font-semibold">{note.title}</h3>
+        <p
+          dangerouslySetInnerHTML={{ __html: note.content }}
+          className="h-24 overflow-hidden text-gray-600"
+        ></p>
+      </Link>
+
+      <div className="flex items-end justify-between mt-2">
+        <p className="text-sm text-slate-500">
+          {new Date(note.updated_at).toDateString()}
+        </p>
+        <div className="flex gap-2">
+          <Link
+            to={`/notes/${note.id}`}
+            className="p-2 text-white bg-green-500 rounded-lg hover:bg-green-600"
+          >
+            <Pen className="size-5" />
+          </Link>
+
+          <button
+            className="p-2 text-white bg-red-500 rounded-lg hover:bg-red-600"
+            onClick={() => setOpenModal(true)}
+          >
+            <Trash className="size-5" />
+          </button>
+        </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
-      <Modal show={openModal} onClose={() => setOpenModal(false)}>
-        <Modal.Header>Confirm Deletion</Modal.Header>
-        <Modal.Body>
-          <p className="text-gray-600">
-            Are you sure you want to delete this note? This action cannot be
-            undone.
-          </p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            color="red"
-            onClick={async () => {
-              await onDelete(note.id, setDeleting);
-              setOpenModal(false);
-            }}
-            isProcessing={deleting}
-          >
-            Yes, Delete
-          </Button>
-          <Button color="green" onClick={() => setOpenModal(false)}>
-            Cancel
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <DeleteConfirmModal
+        id={note.id}
+        onDelete={onDelete}
+        openModal={openModal}
+        setOpenModal={setOpenModal}
+      />
     </div>
   );
 }

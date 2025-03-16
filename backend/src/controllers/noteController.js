@@ -120,6 +120,7 @@ const getNotesHandler = async (req, res) => {
 
   page = parseInt(page);
   limit = parseInt(limit);
+  categoryId = parseInt(categoryId);
 
   if (isNaN(page) || page < 1) page = 1;
   if (isNaN(limit) || limit < 1) limit = 10;

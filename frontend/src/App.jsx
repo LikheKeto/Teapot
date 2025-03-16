@@ -6,7 +6,8 @@ import Notes from "./pages/Notes";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from "./context/AuthContext";
 import NavigationBar from "./components/NavigationBar";
-import FooterBar from "./components/FooterBar";
+import NoteEditor from "./pages/NoteEditor";
+import CategoriesPage from "./pages/Categories";
 
 function App() {
   const { token } = useAuth();
@@ -36,9 +37,33 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/notes/new"
+            element={
+              <ProtectedRoute>
+                <NoteEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/notes/:id"
+            element={
+              <ProtectedRoute>
+                <NoteEditor />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/categories"
+            element={
+              <ProtectedRoute>
+                <CategoriesPage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
-      {/* {!token && <FooterBar />} */}
     </>
   );
 }
