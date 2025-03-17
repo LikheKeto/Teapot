@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TextInput, Button, Alert, Spinner } from "flowbite-react";
+import { TextInput, Button, Alert, Spinner, Label } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -77,7 +77,9 @@ const Register = () => {
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
+            <Label htmlFor="username" value="Username" />
             <TextInput
+              id="username"
               type="text"
               placeholder="Username"
               value={formData.username}
@@ -94,7 +96,9 @@ const Register = () => {
           </div>
 
           <div>
+            <Label htmlFor="email" value="Email" />
             <TextInput
+              id="email"
               type="email"
               placeholder="Email"
               value={formData.email}
@@ -111,7 +115,9 @@ const Register = () => {
           </div>
 
           <div>
+            <Label htmlFor="password" value="Password" />
             <TextInput
+              id="password"
               type="password"
               placeholder="Password"
               value={formData.password}

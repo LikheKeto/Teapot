@@ -52,8 +52,10 @@ const registerHandler = async (req, res) => {
       hashedPassword,
       verificationToken
     );
-    await sendVerificationMail(email, verificationLink, username);
-    logger.info(`Email verification email sent to: '${email}'`);
+    const info = await sendVerificationMail(email, verificationLink, username);
+    logger.info(
+      `Email verification email sent to: '${email}' with id: ${info.id}`
+    );
 
     delete user.verificationToken;
     res.status(201).json(user);

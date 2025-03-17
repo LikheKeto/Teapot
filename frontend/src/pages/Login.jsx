@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TextInput, Button, Alert, Spinner } from "flowbite-react";
+import { TextInput, Button, Alert, Spinner, Label } from "flowbite-react";
 import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -72,7 +72,9 @@ const Login = () => {
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
+            <Label htmlFor="email" value="Email" />
             <TextInput
+              id="email"
               type="email"
               placeholder="Email"
               value={formData.email}
@@ -89,7 +91,9 @@ const Login = () => {
           </div>
 
           <div>
+            <Label htmlFor="password" value="Password" />
             <TextInput
+              id="password"
               type="password"
               placeholder="Password"
               value={formData.password}
