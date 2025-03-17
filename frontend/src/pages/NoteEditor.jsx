@@ -113,7 +113,14 @@ export default function NoteEditor() {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Failed to save note");
+      if (!response.ok) {
+        let err = "Failed to save note";
+        const res = await response.json();
+        if (res.error) {
+          err = res.error.title ? res.error.title : res.error.content;
+        }
+        throw new Error(err);
+      }
 
       const newNote = await response.json();
       toast.success("Note saved successfully!");

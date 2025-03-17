@@ -78,10 +78,21 @@ const assignConstraints = {
   },
 };
 
+const verifyConstraints = {
+  email: {
+    presence: true,
+    email: true,
+  },
+  token: {
+    presence: true,
+  },
+};
+
 module.exports = {
   registerConstraints,
   loginConstraints,
   noteConstraints,
   categoryConstraints,
   assignConstraints,
+  verifyConstraints,
 };

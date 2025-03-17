@@ -2,6 +2,7 @@ const express = require("express");
 const {
   loginHandler,
   registerHandler,
+  verifyHandler,
 } = require("../controllers/authController");
 
 const router = express.Router();
@@ -88,5 +89,39 @@ router.post("/register", registerHandler);
  *         description: Internal server error
  */
 router.post("/login", loginHandler);
+
+/**
+ * @swagger
+ * /api/auth/verify:
+ *   post:
+ *     summary: Verify user email
+ *     description: Verifies email of user from token, and updates status in database.
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - token
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: johndoe@example.com
+ *               token:
+ *                 type: string
+ *                 example: AEFEBEDDF
+ *     responses:
+ *       200:
+ *         description: Successful verification, returns verified user object
+ *       400:
+ *         description: Invalid token or invalid request
+ *       500:
+ *         description: Internal server error
+ */
+router.post("/verify", verifyHandler);
 
 module.exports = router;

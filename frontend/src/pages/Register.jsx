@@ -56,7 +56,7 @@ const Register = () => {
       if (!response.ok) throw new Error(data.error || "Registration failed");
 
       toast.success("Registration successful");
-      navigate("/login");
+      navigate("/verification");
     } catch (error) {
       setServerError(error.message);
     } finally {

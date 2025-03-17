@@ -8,6 +8,7 @@ import { useAuth } from "./context/AuthContext";
 import NavigationBar from "./components/NavigationBar";
 import NoteEditor from "./pages/NoteEditor";
 import CategoriesPage from "./pages/Categories";
+import Verification from "./pages/Verification";
 
 function App() {
   const { token } = useAuth();
@@ -29,6 +30,12 @@ function App() {
             path="/register"
             element={token ? <Navigate to="/notes" /> : <Register />}
           />
+
+          <Route
+            path="/verification"
+            element={token ? <Navigate to="/notes" /> : <Verification />}
+          />
+
           <Route
             path="/notes"
             element={
@@ -62,6 +69,8 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
     </div>

@@ -1,13 +1,21 @@
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-const { createUser, findUserByEmail } = require("../models/userModel");
+const {
+  createUser,
+  findUserByEmail,
+  declareVerified,
+  checkStatus,
+} = require("../models/userModel");
 const config = require("../utils/config");
 const logger = require("../utils/logger");
 const {
   loginConstraints,
   registerConstraints,
+  verifyConstraints,
 } = require("../utils/constraints");
 const validate = require("validate.js");
+const { sendVerificationMail } = require("../utils/mail");
 
 const registerHandler = async (req, res) => {
   const { username, email, password } = req.body;
@@ -19,11 +27,37 @@ const registerHandler = async (req, res) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
+  const verificationToken = crypto.randomBytes(20).toString("hex");
 
   try {
-    const user = await createUser(username, email, hashedPassword);
+    const { existing, pendingApproval } = await checkStatus(email);
+    if (existing) {
+      return res.status(409).json({
+        error: { email: `User with this email already exists` },
+      });
+    } else if (pendingApproval) {
+      return res.status(409).json({
+        error: {
+          email: `This email is unverified, click email link to verify`,
+        },
+      });
+    }
+
+    const encodedEmail = encodeURIComponent(email);
+    const verificationLink = `http://localhost:5173/verification?token=${verificationToken}&email=${encodedEmail}`;
+
+    const user = await createUser(
+      username,
+      email,
+      hashedPassword,
+      verificationToken
+    );
+    await sendVerificationMail(email, verificationLink);
+    logger.info(`Email verification email sent to: '${email}'`);
+
+    delete user.verificationToken;
     res.status(201).json(user);
-    logger.info(`User registered: '${email}'`);
+    logger.info(`Unverified user registered: '${email}'`);
   } catch (err) {
     logger.error(`Registration error for email: ${email}`, {
       error: err.message,
@@ -58,7 +92,11 @@ const loginHandler = async (req, res) => {
 
   try {
     const user = await findUserByEmail(email);
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (
+      !user ||
+      !(await bcrypt.compare(password, user.password)) ||
+      (user && !user.verified)
+    ) {
       return res.status(400).json({ error: "Invalid email or password" });
     }
 
@@ -75,7 +113,39 @@ const loginHandler = async (req, res) => {
   }
 };
 
+const verifyHandler = async (req, res) => {
+  const { email, token } = req.body;
+
+  const verifyInput = { email, token };
+  const validationFailed = validate(verifyInput, verifyConstraints);
+  if (validationFailed) {
+    return res.status(400).json({ error: validationFailed });
+  }
+
+  try {
+    const user = await findUserByEmail(email);
+    if (!user || (user && user.verified)) {
+      return res
+        .status(400)
+        .json({ error: "User doesn't exist or is already verified" });
+    }
+    if (user.verificationToken != token) {
+      return res.status(400).json({ error: "Invalid token" });
+    }
+
+    const finalUser = await declareVerified(email);
+    res.status(200).json(finalUser);
+    logger.info(`User email verified: '${email}'`);
+  } catch (e) {
+    logger.error(`Verification error for email: ${email}`, {
+      error: err.message,
+      stack: err.stack,
+    });
+  }
+};
+
 module.exports = {
   registerHandler,
   loginHandler,
+  verifyHandler,
 };
