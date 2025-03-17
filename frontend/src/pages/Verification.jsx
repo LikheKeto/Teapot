@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Alert, Button, Spinner } from "flowbite-react";
 import { toast } from "react-toastify";
@@ -11,8 +11,11 @@ const Verification = () => {
   const [verificationStatus, setVerificationStatus] = useState("pending"); // pending, success, error, noParams
   const [errorMessage, setErrorMessage] = useState("");
 
+  const isVerificationAttempted = useRef(false);
+
   useEffect(() => {
-    if (token && email) {
+    if (token && email && !isVerificationAttempted.current) {
+      isVerificationAttempted.current = true;
       verifyEmail(token, email);
     } else {
       setVerificationStatus("noParams");

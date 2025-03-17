@@ -19,7 +19,7 @@ const router = express.Router();
  * /api/auth/register:
  *   post:
  *     summary: Register a new user
- *     description: Creates a new user account with a hashed password.
+ *     description: Creates a new user account and sends verification email.
  *     tags: [Authentication]
  *     requestBody:
  *       required: true
@@ -57,6 +57,40 @@ router.post("/register", registerHandler);
 
 /**
  * @swagger
+ * /api/auth/verify:
+ *   post:
+ *     summary: Verify user email
+ *     description: Verifies email of user from token, and updates status in database.
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - token
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: johndoe@example.com
+ *               token:
+ *                 type: string
+ *                 example: 4704dbfc0b68dfd8fbdb04f5f3f17bcd351c35ff
+ *     responses:
+ *       200:
+ *         description: Successful verification, returns verified user object
+ *       400:
+ *         description: Invalid token or invalid request
+ *       500:
+ *         description: Internal server error
+ */
+router.post("/verify", verifyHandler);
+
+/**
+ * @swagger
  * /api/auth/login:
  *   post:
  *     summary: User login
@@ -89,39 +123,5 @@ router.post("/register", registerHandler);
  *         description: Internal server error
  */
 router.post("/login", loginHandler);
-
-/**
- * @swagger
- * /api/auth/verify:
- *   post:
- *     summary: Verify user email
- *     description: Verifies email of user from token, and updates status in database.
- *     tags: [Authentication]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *               - token
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *                 example: johndoe@example.com
- *               token:
- *                 type: string
- *                 example: AEFEBEDDF
- *     responses:
- *       200:
- *         description: Successful verification, returns verified user object
- *       400:
- *         description: Invalid token or invalid request
- *       500:
- *         description: Internal server error
- */
-router.post("/verify", verifyHandler);
 
 module.exports = router;

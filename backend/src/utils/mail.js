@@ -1,27 +1,45 @@
 const nodemailer = require("nodemailer");
 
-async function sendVerificationMail(to, verificationLink) {
+async function sendVerificationMail(to, verificationLink, username) {
   try {
     const transporter = nodemailer.createTransport({
-      service: "gmail", // Use Gmail service
+      service: "gmail",
       auth: {
-        user: process.env.NODEMAILER_EMAIL_ADDRESS, // Your Gmail email address
-        pass: process.env.NODEMAILER_APP_PASSWORD, // Your Gmail app password
+        user: process.env.NODEMAILER_EMAIL_ADDRESS,
+        pass: process.env.NODEMAILER_APP_PASSWORD,
       },
     });
 
     const mailOptions = {
-      from: process.env.NODEMAILER_EMAIL_ADDRESS, // Your Gmail email address
+      from: process.env.NODEMAILER_EMAIL_ADDRESS,
       to,
       subject: "Verify your email",
-      html: `<p>Click <a href="${verificationLink}">here</a> to verify your email.</p>`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
+          <h2 style="color: #007bff; text-align: center;">Welcome, ${username}!</h2>
+          <p style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+            Thank you for registering with us. To complete your registration, please verify your email address by clicking the button below:
+          </p>
+          <div style="text-align: center; margin-bottom: 20px;">
+            <a href="${verificationLink}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Verify Email</a>
+          </div>
+          <p style="font-size: 14px; color: #777;">
+            If the button above doesn't work, you can also copy and paste the following link into your browser:
+            <br>
+            <a href="${verificationLink}">${verificationLink}</a>
+          </p>
+          <p style="font-size: 14px; color: #777;">
+            If you did not register for an account, please disregard this email.
+          </p>
+        </div>
+      `,
     };
 
     const info = await transporter.sendMail(mailOptions);
     console.log("Message sent: %s", info.messageId);
   } catch (error) {
     console.error("Error sending email:", error);
-    throw error; // Re-throw the error to be handled by the caller
+    throw error;
   }
 }
 
