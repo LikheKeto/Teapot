@@ -14,9 +14,10 @@
   - [Backend Setup](#backend-setup)
     - [1. Clone the Repository](#1-clone-the-repository)
     - [2. Install Dependencies](#2-install-dependencies)
-    - [3. Set Up Environment Variables](#3-set-up-environment-variables)
-    - [4. Migrate the Database](#4-migrate-the-database)
-    - [5. Start the Backend Server](#5-start-the-backend-server)
+    - [3. Run tests](#3-run-tests)
+    - [4. Set Up Environment Variables](#4-set-up-environment-variables)
+    - [5. Migrate the Database](#5-migrate-the-database)
+    - [6. Start the Backend Server](#6-start-the-backend-server)
   - [Frontend Setup](#frontend-setup)
     - [1. Install Dependencies](#1-install-dependencies)
     - [2. Set Up Environment Variables](#2-set-up-environment-variables)
@@ -91,17 +92,22 @@ cd backend
 npm install
 ```
 
-### 3. Set Up Environment Variables
+### 3. Run tests
+```bash
+npm run test
+```
+
+### 4. Set Up Environment Variables
 Create a `.env` file in the backend directory and provide values as per the example file.
 
-### 4. Migrate the Database
+### 5. Migrate the Database
 To set up the database, run migrations:
 ```bash
 DATABASE_URL=postgres://user:password@localhost/dbname npm run migrate:up
 ```
 This will set up the database and also create a user with mock notes and categories for testing purposes.
 
-### 5. Start the Backend Server
+### 6. Start the Backend Server
 ```bash
 npm start
 ```
