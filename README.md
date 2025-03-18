@@ -79,8 +79,8 @@ Built with **React** for the frontend, **Node.js** for the backend, and **Postgr
 
 ### 1. Clone the Repository
 ```bash
-git clone <repository-url>
-cd <project-folder>
+git clone https://github.com/LikheKeto/Teapot.git
+cd Teapot
 ```
 
 ### 2. Install Dependencies
