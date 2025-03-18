@@ -44,7 +44,7 @@ const registerHandler = async (req, res) => {
     }
 
     const encodedEmail = encodeURIComponent(email);
-    const verificationLink = `http://localhost:5173/verification?token=${verificationToken}&email=${encodedEmail}`;
+    const verificationLink = `${process.env.FRONTEND_URL}/verification?token=${verificationToken}&email=${encodedEmail}`;
 
     const user = await createUser(
       username,
