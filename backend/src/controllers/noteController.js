@@ -173,11 +173,11 @@ const assignToCategoryHandler = async (req, res) => {
 
   const userId = req.user.id;
   try {
-    const unauthorized = await assignNote(noteId, categoryId, userId);
-    if (unauthorized) {
-      return res.status(400).json({ error: unauthorized });
+    const result = await assignNote(noteId, categoryId, userId);
+    if (typeof result === "string") {
+      return res.status(400).json({ error: result });
     }
-    res.json({ success: true });
+    res.status(200).json({ success: true });
   } catch (err) {
     logger.error(
       `Error assigning note: ${noteId} to category: ${categoryId} by user: ${userId}`,
@@ -203,9 +203,9 @@ const deassignCategoryHandler = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const unauthorized = await deassignNote(noteId, categoryId, userId);
-    if (unauthorized) {
-      return res.status(400).json({ error: unauthorized });
+    const result = await deassignNote(noteId, categoryId, userId);
+    if (typeof result === "string") {
+      return res.status(400).json({ error: result });
     }
     res.json({ success: true });
   } catch (err) {

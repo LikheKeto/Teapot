@@ -105,7 +105,7 @@ const loginHandler = async (req, res) => {
     const token = jwt.sign({ id: user.id }, config.jwtSecret, {
       expiresIn: "24h",
     });
-    res.json({ token });
+    res.status(200).json({ token });
   } catch (err) {
     logger.error(`Login error for email: ${email}`, {
       error: err.message,
