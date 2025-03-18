@@ -37,6 +37,8 @@ Teapot is a **Note-Taking Application** that enables users to create, edit, dele
 
 Built with **React** for the frontend, **Node.js** for the backend, and **PostgreSQL** as the relational database, Teapot offers a seamless and intuitive user experience. The application adheres to best practices in security, performance, and scalability.
 
+> Test Credentials - email: `mockuser@example.com`, password: `password`
+
 ## Features
 
 ### Notes
@@ -97,6 +99,7 @@ To set up the database, run migrations:
 ```bash
 DATABASE_URL=postgres://user:password@localhost/dbname npm run migrate:up
 ```
+This will set up the database and also create a user with mock notes and categories for testing purposes.
 
 ### 5. Start the Backend Server
 ```bash
